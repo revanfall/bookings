@@ -1,11 +1,13 @@
 package main
 
 import (
+	"encoding/gob"
 	"fmt"
 	"github.com/alexedwards/scs/v2"
-	"github.com/revanfall/bookings/pkg/config"
-	"github.com/revanfall/bookings/pkg/handlers"
-	"github.com/revanfall/bookings/pkg/render"
+	"github.com/revanfall/bookings/internal/config"
+	"github.com/revanfall/bookings/internal/handlers"
+	"github.com/revanfall/bookings/internal/models"
+	"github.com/revanfall/bookings/internal/render"
 	"log"
 	"net/http"
 	"time"
@@ -16,6 +18,21 @@ var app config.AppConfig
 var session *scs.SessionManager
 
 func main() {
+	err := run()
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("Starting server at %v", portNum)
+
+	srv := &http.Server{Addr: portNum, Handler: routes(&app)}
+	err = srv.ListenAndServe()
+	log.Fatal(err)
+}
+
+func run() error {
+	// store value in a session
+
+	gob.Register(models.Reservation{})
 
 	app.InProduction = false
 
@@ -30,6 +47,7 @@ func main() {
 	tc, err := render.CreateTemplateCache()
 	if err != nil {
 		log.Fatal("cannot create template cache")
+		return err
 	}
 	app.TemplateCache = tc
 	app.UseCache = false
@@ -37,13 +55,5 @@ func main() {
 	handlers.NewHandlers(repo)
 
 	render.NewTemplates(&app)
-
-	//http.HandleFunc("/", handlers.Repo.Home)
-	//http.HandleFunc("/about", handlers.Repo.AboutHandler)
-
-	fmt.Printf("Starting server at %v", portNum)
-
-	srv := &http.Server{Addr: portNum, Handler: routes(&app)}
-	err = srv.ListenAndServe()
-	log.Fatal(err)
+	return nil
 }

@@ -1,0 +1,22 @@
+mode: set
+github.com/revanfall/bookings/internal/handlers/handlers.go:23.47,25.2 1 1
+github.com/revanfall/bookings/internal/handlers/handlers.go:28.33,30.2 1 1
+github.com/revanfall/bookings/internal/handlers/handlers.go:32.67,37.2 3 1
+github.com/revanfall/bookings/internal/handlers/handlers.go:40.71,45.2 3 1
+github.com/revanfall/bookings/internal/handlers/handlers.go:48.69,53.2 3 1
+github.com/revanfall/bookings/internal/handlers/handlers.go:55.74,63.2 4 1
+github.com/revanfall/bookings/internal/handlers/handlers.go:66.78,68.16 2 1
+github.com/revanfall/bookings/internal/handlers/handlers.go:73.2,87.19 6 1
+github.com/revanfall/bookings/internal/handlers/handlers.go:68.16,71.3 2 0
+github.com/revanfall/bookings/internal/handlers/handlers.go:87.19,94.3 3 0
+github.com/revanfall/bookings/internal/handlers/handlers.go:94.8,97.3 2 1
+github.com/revanfall/bookings/internal/handlers/handlers.go:101.75,103.2 1 1
+github.com/revanfall/bookings/internal/handlers/handlers.go:105.79,110.2 3 1
+github.com/revanfall/bookings/internal/handlers/handlers.go:118.79,125.16 3 1
+github.com/revanfall/bookings/internal/handlers/handlers.go:129.2,130.14 2 1
+github.com/revanfall/bookings/internal/handlers/handlers.go:125.16,127.3 1 0
+github.com/revanfall/bookings/internal/handlers/handlers.go:133.70,135.2 1 1
+github.com/revanfall/bookings/internal/handlers/handlers.go:137.75,145.2 5 1
+github.com/revanfall/bookings/internal/handlers/handlers.go:147.81,150.9 2 1
+github.com/revanfall/bookings/internal/handlers/handlers.go:156.2,163.7 4 0
+github.com/revanfall/bookings/internal/handlers/handlers.go:150.9,155.3 4 1
