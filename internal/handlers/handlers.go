@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/revanfall/bookings/internal/config"
 	"github.com/revanfall/bookings/internal/forms"
+	"github.com/revanfall/bookings/internal/helpers"
 	"github.com/revanfall/bookings/internal/models"
 	"github.com/revanfall/bookings/internal/render"
 	"log"
@@ -30,25 +31,17 @@ func NewHandlers(r *Repository) {
 }
 
 func (m *Repository) Home(w http.ResponseWriter, r *http.Request) {
-	remoteIP := r.RemoteAddr
-	m.App.Session.Put(r.Context(), "remote_ip", remoteIP)
 
 	render.RenderTemplate(w, "home.page.tmpl", &models.TemplateData{}, r)
 }
 
 // Generals room page
 func (m *Repository) Generals(w http.ResponseWriter, r *http.Request) {
-	remoteIP := r.RemoteAddr
-	m.App.Session.Put(r.Context(), "remote_ip", remoteIP)
-
 	render.RenderTemplate(w, "generals.page.tmpl", &models.TemplateData{}, r)
 }
 
 // Majors room page
 func (m *Repository) Majors(w http.ResponseWriter, r *http.Request) {
-	remoteIP := r.RemoteAddr
-	m.App.Session.Put(r.Context(), "remote_ip", remoteIP)
-
 	render.RenderTemplate(w, "majors.page.tmpl", &models.TemplateData{}, r)
 }
 
@@ -66,7 +59,7 @@ func (m *Repository) Reservation(w http.ResponseWriter, r *http.Request) {
 func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
-		log.Println(err)
+		helpers.ServerError(w, err)
 		return
 	}
 
@@ -123,7 +116,9 @@ func (m *Repository) AvailabilityJSON(w http.ResponseWriter, r *http.Request) {
 
 	out, err := json.MarshalIndent(resp, "", "   ")
 	if err != nil {
+		helpers.ServerError(w, err)
 		log.Println(err)
+		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -135,20 +130,15 @@ func (m *Repository) Contact(w http.ResponseWriter, r *http.Request) {
 }
 
 func (m *Repository) AboutHandler(w http.ResponseWriter, r *http.Request) {
-	stringMap := make(map[string]string)
-	stringMap["test"] = "Bye again"
-	remoteIP := m.App.Session.GetString(r.Context(), "remote_ip")
-	stringMap["remote_ip"] = remoteIP
-	render.RenderTemplate(w, "about.page.tmpl", &models.TemplateData{
-		StringMap: stringMap,
-	}, r)
+
+	render.RenderTemplate(w, "about.page.tmpl", &models.TemplateData{}, r)
 }
 
 func (m *Repository) ReservationSummary(w http.ResponseWriter, r *http.Request) {
 	reservation, ok := m.App.Session.Get(r.Context(), "reservation").(models.Reservation)
 
 	if !ok {
-		log.Println("Cannot get item from session")
+		m.App.ErrorLog.Println("Can't get item from session")
 		m.App.Session.Put(r.Context(), "error", "Can't get reservation for session")
 		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 		return
