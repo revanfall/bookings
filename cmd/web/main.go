@@ -4,6 +4,7 @@ import (
 	"encoding/gob"
 	"fmt"
 	"github.com/alexedwards/scs/v2"
+	"github.com/revanfall/bookings/driver"
 	"github.com/revanfall/bookings/internal/config"
 	"github.com/revanfall/bookings/internal/handlers"
 	"github.com/revanfall/bookings/internal/helpers"
@@ -22,10 +23,11 @@ var infoLog *log.Logger
 var errorLog *log.Logger
 
 func main() {
-	err := run()
+	db, err := run()
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer db.Sql.Close()
 	fmt.Printf("Starting server at %v", portNum)
 
 	srv := &http.Server{Addr: portNum, Handler: routes(&app)}
@@ -33,10 +35,14 @@ func main() {
 	log.Fatal(err)
 }
 
-func run() error {
+func run() (*driver.DB, error) {
 	// store value in a session
 
 	gob.Register(models.Reservation{})
+	gob.Register(models.User{})
+	gob.Register(models.Room{})
+	gob.Register(models.Restriction{})
+	gob.Register(models.RoomRestriction{})
 
 	app.InProduction = false
 
@@ -54,17 +60,25 @@ func run() error {
 
 	app.Session = session
 
+	//connect to db
+	log.Println("Connecting to db")
+	db, err := driver.ConnectSQL("host=localhost port=5432 dbname=bookings user=postgres password=1234")
+	if err != nil {
+		log.Fatal("cannot connect to db ", err)
+	}
+	log.Println("Connected to db")
+
 	tc, err := render.CreateTemplateCache()
 	if err != nil {
 		log.Fatal("cannot create template cache")
-		return err
+		return nil, err
 	}
 	app.TemplateCache = tc
 	app.UseCache = false
-	repo := handlers.NewRepo(&app)
+	repo := handlers.NewRepo(&app, db)
 	handlers.NewHandlers(repo)
 	helpers.NewHelpers(&app)
 
-	render.NewTemplates(&app)
-	return nil
+	render.NewRenderer(&app)
+	return db, nil
 }
