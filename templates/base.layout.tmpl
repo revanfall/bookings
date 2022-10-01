@@ -51,6 +51,23 @@ href="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.0/dist/css/datepicker-
         <li class="nav-item">
           <a href="/contact" class="nav-link">Contact page</a>
         </li>
+          <li class="nav-item">
+              {{if eq .IsAuthenticated 1}}
+                    <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
+                  Admin
+              </a>
+              <div class="dropdown-menu">
+                  <a class="dropdown-item" href="/admin/dashboard">Dashboard</a>
+                  <a class="dropdown-item" href="/user/logout">Logout </a>
+              </div>
+          </li>
+
+              {{else}}
+                  <a href="/user/login" class="nav-link">Login</a>
+
+              {{end}}
+          </li>
       </ul>
 
     </div>

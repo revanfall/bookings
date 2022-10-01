@@ -28,6 +28,10 @@ func main() {
 		log.Fatal(err)
 	}
 	defer db.Sql.Close()
+
+	defer close(app.MailChan)
+	listenForMail()
+	fmt.Println("Starting mail listener...")
 	fmt.Printf("Starting server at %v", portNum)
 
 	srv := &http.Server{Addr: portNum, Handler: routes(&app)}
@@ -43,6 +47,9 @@ func run() (*driver.DB, error) {
 	gob.Register(models.Room{})
 	gob.Register(models.Restriction{})
 	gob.Register(models.RoomRestriction{})
+	gob.Register(map[string]int{})
+	mailChan := make(chan models.MailData)
+	app.MailChan = mailChan
 
 	app.InProduction = false
 
@@ -78,7 +85,6 @@ func run() (*driver.DB, error) {
 	repo := handlers.NewRepo(&app, db)
 	handlers.NewHandlers(repo)
 	helpers.NewHelpers(&app)
-
 	render.NewRenderer(&app)
 	return db, nil
 }
