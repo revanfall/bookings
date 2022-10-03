@@ -17,7 +17,7 @@ import (
 	"time"
 )
 
-var portNum = ":3000"
+var portNum = os.Getenv("PORT")
 var app config.AppConfig
 var session *scs.SessionManager
 var infoLog *log.Logger
@@ -31,7 +31,7 @@ func main() {
 	defer db.Sql.Close()
 
 	defer close(app.MailChan)
-	listenForMail()
+	//listenForMail()
 	fmt.Println("Starting mail listener...")
 	fmt.Printf("Starting server at %v", portNum)
 
@@ -53,10 +53,10 @@ func run() (*driver.DB, error) {
 	//in production
 	inProduction := flag.Bool("production", true, "Application is in production")
 	useCache := flag.Bool("cache", true, "Use template cache")
-	dbHost := flag.String("dbhost", "localhost", "Database host")
-	dbName := flag.String("dbname", "", "Database name")
-	dbUser := flag.String("dbuser", "", "Database user")
-	dbPass := flag.String("dbpass", "", "Database password")
+	dbHost := flag.String("dbhost", "139.144.78.90", "Database host")
+	dbName := flag.String("dbname", "bookings", "Database name")
+	dbUser := flag.String("dbuser", "admin", "Database user")
+	dbPass := flag.String("dbpass", "1234", "Database password")
 	dbPort := flag.String("dbport", "5432", "Database port")
 	dbSSL := flag.String("dbssl", "disable", "Database ssl settings (disable, prefer, require)")
 
